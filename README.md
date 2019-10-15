@@ -8,6 +8,7 @@ set username, password, db_name
     $password = "";
     $db_name = "user_restful";
 
+You can login with username "admin" and password "admin".
 
 Import db.sql on your database GUI(SQLYog*)
 
