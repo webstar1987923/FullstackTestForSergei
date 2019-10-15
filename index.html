@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+    <link href="./assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./assets/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <!-- Content -->
+    <section id="content" style="display: none">
+        <div class="row m-0">
+            <div class="col-lg-12" align="center">
+                <div class="frm_login" align="left">
+                    <form class="form-signin">
+                        <div class="form-label-group">
+                            <img src="./assets/images/Logo.svg">
+                        </div>
+                        <div class="form-label-group mt-5 mb-5">
+                            <h4>Welcome to Learning Management System</h4>
+                            <h6>Please login to continue</h6>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-container">
+                                <img src="./assets/images/user.svg" style="height: 45px; margin-top:5px;">
+                                <input type="text" class="form-control" placeholder="Username" id="username" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-container">
+                                <img src="./assets/images/password.svg" style="height: 45px; margin-top:5px;">
+                                <input type="password" class="form-control" placeholder="Password" id="password" required>
+                            </div>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" id="remember"> Remember me
+                            </label>
+                        </div>
+                        <button class="btn btn-lg btn-primary btn-block mt-5 btn_login" type="submit">
+                            <div class="row">
+                                <div class="col" align="left" style="text-transform: none;">Log in</div>
+                                <div class="col" align="right">
+                                    <i class="fa fa-angle-right" aria-hidden="true" style="border: solid 1px #fff; border-radius:50%; padding:5px 12px 5px 12px;"></i>
+                                </div>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Content -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="./assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            //Check remember user
+            function getCookie(name) {
+                var cookieArr = document.cookie.split(";");
+                
+                for(var i = 0; i < cookieArr.length; i++) {
+                    var cookiePair = cookieArr[i].split("=");
+                    if(name == cookiePair[0].trim()) {
+                        return decodeURIComponent(cookiePair[1]);
+                    }
+                }
+                
+                return null;
+            }
+            //Initial Username and password
+            $("#username").val(getCookie('_username'))
+            $("#password").val(getCookie('_password'))
+
+            //isLoggedIn
+            function isLoggedIn(){
+                let username=getCookie('username')
+                let password=getCookie('username')
+
+                $.ajax({
+                    url:'./isLoggedIn.php',
+                    type:'POST',
+                    async:false,
+                    cache:false,
+                    data:{'user_name':username,'password':password},
+                    dataType:'json',
+                    success:function(result){
+                        if(result){
+                            document.location.href="./first.html"
+                        }
+                        else{
+                            $("#content").css('display','block')
+                        }
+                    },
+                    error:function(error){
+                        $("#content").css('display','block')
+                    }
+                })
+            }
+            isLoggedIn();
+            
+            //Login
+            $('.form-signin').submit(function(){
+                let username=$("#username").val()
+                let password=$("#password").val()
+                
+                $.ajax({
+                    url:'./auth.php',
+                    type:'POST',
+                    cache:false,
+                    data:{'user_name':username,'password':password},
+                    success:function(result){
+                        if(result){
+                            document.location.href="./first.html"
+                            if($('#remember').is(":checked"))
+                            {
+                                document.cookie = "_username=" + username
+                                document.cookie = "_password=" + password
+                            }
+                            document.cookie = "username=" + username
+                            document.cookie = "password=" + password
+                        }
+                        else
+                            alert("Invalid Username or Password")
+                    },
+                    error:function(error){
+                    }
+                })
+                return false;
+            })
+        })
+    </script>
+</body>
+</html>
